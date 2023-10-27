@@ -17,5 +17,15 @@ class UserController extends BaseController
         }
        
 }
+     public function checkAction(){
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+        if (strtoupper($requestMethod) == 'GET'){
+            $postData = json_decode(file_get_contents('php://inputs'),true);
+            // Instantiate a UserModel to create a new user
+            $userModel =  new UserModel();
+            $userModel - > checkUser($postData);
+        } 
+
+     }
 }
 ?>
