@@ -4,13 +4,13 @@ class UserModel extends Database
 {   
     public function createUser($userData){ // registration function model
         $sql = "INSERT INTO users (username, password) VALUES(?,?) ";
-        $userData[1]= password_hash($userData[1],  PASSWORD_DEFAULT); 
-        executeStatement( $sql , ["ss",$userData]);
+        $hashed_password= password_hash($userData['password'],  PASSWORD_DEFAULT); 
+        executeStatement($sql, ["ss", $userData['username'], $hashedPassword]);
     }
 
     public function checkUser($userData){ // user model function for login.php
-        $user = $userData[0];
-        $password = $userData[1];
+        $user = $userData['username'];
+        $password = $userData['password'];
         $result = select("SELECT * FROM users WHERE username = ?", ["s", $user]);
         $num = mysqli_num_rows($result);
         $row = mysqli_fetch_assoc($result);
@@ -37,29 +37,34 @@ class UserModel extends Database
     
     public function deleteRating($userData){ // user model function for delete
         $sql_query = "SELECT song, artist, rating FROM ratings WHERE id = ?";
-        $id = $userData[1];
+        $id = $userData['id'];
+        $song = $userData['song'];
         $result = select($sql_query, ["i", $id]);
         $num = mysqli_num_rows($result);
         if ($num === 0){
             $sql = "DELETE FROM ratings WHERE song = ? AND id = ?";
-            executeStatement( $sql , ["si",$userData]);
+            executeStatement( $sql , ["si",$song,$id]);
     }
 }
 
     public function addRating($userData){ // user model function for addsong
         $sql1 = "SELECT * FROM ratings WHERE song = ? ";
-        $song = $userData[2];
+        $song = $userData['song'];
+        $username = $userData['username'];
+        $rating = $userData['rating'];
+        $artist = $userData['artist'];
         $result = select($sql1, ["s",$song]);
         $num = mysqli_num_rows($result);
         if ($num === 0){
             $sql = "INSERT INTO ratings (username, artist, song, rating) VALUES (?,?,?,?)";
-            executeStatement( $sql , ["sssi",$userData]);
+            executeStatement( $sql , ["sssi",$username,$artist,$song,$rating]);
         }
 
     }
 
-    public function getRating($id) // user model function for view
+    public function getRating($userData) // user model function for view
     {
+        $id = $userData['id'];
         return $this->select("SELECT * FROM ratings WHERE id = ?", ["i", $id]);
     }
 }

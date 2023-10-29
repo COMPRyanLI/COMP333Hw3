@@ -33,9 +33,11 @@ class Database
             if($stmt === false) {
                 throw New Exception("Unable to do prepared statement: " . $query);
             }
-            if( $params ) {
-                $stmt->bind_param($params[0], $params[1]);
+            if ($params) {
+                $types = array_shift($params);
+                $stmt->bind_param($types, ...$params);
             }
+    
             $stmt->execute();
             return $stmt;
         } catch(Exception $e) {
