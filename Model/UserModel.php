@@ -43,14 +43,15 @@ class UserModel extends Database
     
 }
 
-    public function addRating($userData){ // user model function for addsong
+    public function addRating($username,$artist,$song,$rating){ // user model function for addsong
         $sql1 = "SELECT * FROM ratings WHERE song = ? ";
-       
         $result = select($sql1, ["s",$song]);
         $num = mysqli_num_rows($result);
         if ($num === 0){
             $sql = "INSERT INTO ratings (username, artist, song, rating) VALUES (?,?,?,?)";
-            executeStatement( $sql , ["sssi",$username,$artist,$song,$rating]);
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bind_param("sssi",$username,$artist,$song,$rating);
+            $stmt->execute();
         }
 
     }
