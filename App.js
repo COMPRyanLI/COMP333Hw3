@@ -45,26 +45,37 @@ function App() {
   return (
     <div>
       <h1>Song Rating App</h1>
-      <button onClick={() => setFeature('view')}>View Songs</button>
-      <button onClick={() => setFeature('add')}>Add Song</button>
-
-      {feature === 'view' && (
-        <ul>
-          {songList.map((song) => (
-            <li key={song.id}>
-              {song.title} - Rating: {song.rating}
-              <button onClick={() => setFeature('edit') && setEditSong(song)}>Edit</button>
-              <button onClick={() => setFeature('delete') && setEditSong(song)}>Delete</button>
-            </li>
-          ))}
-        </ul>
+      {isLoggedIn ? (
+        // Display the songList view if logged in
+        <>
+          <ul>
+            {songList.map((song) => (
+              <li key={song.id}>
+                {song.song} - Artist: {song.artist} - Rating: {song.rating}
+                <button onClick={() => setFeature('edit') && setEditSong(song)}>Edit</button>
+                <button onClick={() => setFeature('delete') && setEditSong(song)}>Delete</button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        // Display the login form if not logged in
+        <>
+          <input
+            type="text"
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button onClick={handleLogin}>Login</button>
+          {error && <p>{error}</p>}
+        </>
       )}
-
-      {feature === 'add' && <AddSong onAddSong={handleAddSong} />}
-      {feature === 'edit' && <EditSong song={editSong} onEditSong={handleEditSong} />}
-      {feature === 'delete' && <DeleteSong song={editSong} onDeleteSong={handleDeleteSong} />}
     </div>
-  );
-}
+  );}
 
 export default App;
