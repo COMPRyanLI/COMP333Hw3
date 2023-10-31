@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 function DeleteSong({ song, onDeleteSong }) {
     const handleDeleteSong = () => {
@@ -9,8 +9,9 @@ function DeleteSong({ song, onDeleteSong }) {
     return (
       <div>
         <h2>Delete Song</h2>
-        <p>Are you sure you want to delete the song "{song.title}"?</p>
+        <p>Are you sure you want to delete the song "{song.song}"?</p>
         <button onClick={handleDeleteSong}>Delete</button>
+        
       </div>
     );
   }
