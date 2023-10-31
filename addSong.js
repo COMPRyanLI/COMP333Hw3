@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 
-// refercned chatGPT for 
-function addSong({ onAddSong }) {
+function AddSong({ onAddSong }) {
   const [artist, setArtist] = useState('');
-  const [title, setTitle] = useState('');
+  const [song, setSong] = useState('');
   const [rating, setRating] = useState('');
 
-  const handleAddSong = () => {
+  const handleAddSong = (e) => {
+    e.preventDefault();
+
+    // Check if the rating is valid, you can adjust this as necessary
+    if (rating < 0 || rating > 5) {
+      alert("Rating should be between 0 and 5");
+      return;
+    }
+
     // Create a new song object with the input values
     const newSong = {
       artist: artist,
@@ -26,7 +33,7 @@ function addSong({ onAddSong }) {
   return (
     <div>
       <h2>Add New Song Rating</h2>
-      <form>
+      <form onSubmit={handleAddSong}>
         <div>
           <label>Artist:</label>
           <input type="text" value={artist} onChange={(e) => setArtist(e.target.value)} />
@@ -39,7 +46,7 @@ function addSong({ onAddSong }) {
           <label>Rating:</label>
           <input type="number" value={rating} onChange={(e) => setRating(e.target.value)} />
         </div>
-        <button type="button" onClick={handleAddSong}>
+        <button type="submit">
           Add Song
         </button>
       </form>
@@ -47,4 +54,4 @@ function addSong({ onAddSong }) {
   );
 }
 
-export default addSong;
+export default AddSong;
