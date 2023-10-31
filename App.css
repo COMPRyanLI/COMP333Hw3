@@ -1,0 +1,19 @@
+/* This class hides the Add Song form by default */
+.add-song-form-hidden {
+  display: none;
+}
+
+/* This class aligns the Add Song form to the right when applied */
+.add-song-form-show-right {
+  display: block;
+  float: right;
+  margin-right: 200px; /* Adjust the margin to your preference */
+}
+
+.side-bar {
+  position: fixed; /* This positions the container to the side and fixes it in place */
+  top: 0; /* Adjust the top value to position it vertically */
+  left: 0; /* Adjust the left value to position it horizontally */
+  padding: 20px; /* Add some padding for spacing */
+  background-color: #f2f2f2; /* Add a background color for the side bar */
+}
