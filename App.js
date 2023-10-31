@@ -1,65 +1,139 @@
-import React, { useState } from 'react';
-import addSong from './addSong';
+import React, { useState, useEffect } from 'react';
+import AddSong from './addSong';
 import UpdateSong from './edit';
 import DeleteSong from './delete';
-
 
 function App() {
   const [feature, setFeature] = useState('view'); // 'view', 'edit', 'delete', or 'add'
   const [songList, setSongList] = useState([]);
   const [editSong, setEditSong] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch song entries from the database
-    fetch('') // add in our  API endpoint
-      .then((response) => response.json())
-      .then((data) => setSongList(data))
-      .catch((error) => console.error('Error fetching song entries:', error));
+    fetch('http://localhost/index.php/user/view', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      setSongList(data); // Assuming the server returns a list of songs
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   }, []);
 
-  // Function to add a new song
+  const handleLogin = () => {
+    // You should add the login fetch here
+    fetch('http://localhost/index.php/user/check', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.loggedin) {
+        setIsLoggedIn(true);
+      } else {
+        setError('Invalid username or password.');
+      }
+    })
+    .catch((error) => console.error('Error logging in:', error));
+  };
+  
   const handleAddSong = (newSong) => {
-    // Then, update the songList state with the new song
-    const updatedSongList = [...songList, newSong];
-    setSongList(updatedSongList);
-    setFeature('view');
+    fetch('http://localhost/index.php/user/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newSong),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Assuming the backend returns the added song with an ID
+      setSongList([...songList, data]);
+      setFeature('view');
+    })
+    .catch((error) => console.error('Error adding song:', error));
   };
 
-  // Function to edit an existing song
   const handleEditSong = (editedSong) => {
-    const updatedSongList = songList.map((song) =>
-      song.id === editedSong.id ? editedSong : song
-    );
-    setSongList(updatedSongList);
-    setFeature('view');
-    setEditSong(null);
+    fetch(`http://localhost/index.php/user/update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(editedSong),
+    })
+    .then(() => {
+      const updatedSongList = songList.map((song) =>
+        song.id === editedSong.id ? editedSong : song
+      );
+      setSongList(updatedSongList);
+      setFeature('view');
+      setEditSong(null);
+    })
+    .catch((error) => console.error('Error editing song:', error));
   };
 
-  // Function to delete an existing song
   const handleDeleteSong = (songId) => {
-    const updatedSongList = songList.filter((song) => song.id !== songId);
-    setSongList(updatedSongList);
-    setFeature('view');
+    fetch(`http://localhost/index.php/user/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: songId }),
+    })
+    .then(() => {
+      const updatedSongList = songList.filter((song) => song.id !== songId);
+      setSongList(updatedSongList);
+      setFeature('view');
+    })
+    .catch((error) => console.error('Error deleting song:', error));
   };
+  // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
   return (
     <div>
       <h1>Song Rating App</h1>
       {isLoggedIn ? (
-        // Display the songList view if logged in
         <>
-          <ul>
-            {songList.map((song) => (
-              <li key={song.id}>
-                {song.song} - Artist: {song.artist} - Rating: {song.rating}
-                <button onClick={() => setFeature('edit') && setEditSong(song)}>Edit</button>
-                <button onClick={() => setFeature('delete') && setEditSong(song)}>Delete</button>
-              </li>
-            ))}
-          </ul>
+          {feature === 'view' && (
+            <div>
+              <ul>
+                {songList.map((song) => (
+                  <li key={song.id}>
+                    {song.title} - Artist: {song.artist} - Rating: {song.rating}
+                    <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
+                    <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
+                  </li>
+                ))}
+              </ul>
+              <button onClick={() => setFeature('add')}>Add Song</button>
+            </div>
+          )}
+
+          {feature === 'add' && songList && (
+            <AddSong onAddSong={handleAddSong} onCancel={() => setFeature('view')} />
+          )}
+
+          {feature === 'edit' && editSong && (
+            <UpdateSong song={editSong} onUpdate={handleEditSong} onCancel={() => setFeature('view')} />
+          )}
+          {feature === 'delete' && editSong && (
+            <DeleteSong song={editSong} onDeleteSong={handleDeleteSong} onCancel={() => setFeature('view')} />
+          )}
+
         </>
       ) : (
-        // Display the login form if not logged in
         <>
           <input
             type="text"
@@ -76,6 +150,7 @@ function App() {
         </>
       )}
     </div>
-  );}
+  );
+}
 
 export default App;
