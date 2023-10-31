@@ -5,7 +5,7 @@ class Database
     public function __construct()
     {
         try {
-            $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
+            $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME,DB_PORT);
     	
             if ( mysqli_connect_errno()) {
                 throw new Exception("Could not connect to database.");   
@@ -26,23 +26,31 @@ class Database
         }
         return false;
     }
-    private function executeStatement($query = "" , $params = [])
-    {
-        try {
-            $stmt = $this->connection->prepare( $query );
-            if($stmt === false) {
-                throw New Exception("Unable to do prepared statement: " . $query);
+    private function executeStatement($query = "", $params = [])
+{
+    try {
+        $stmt = $this->connection->prepare($query);
+        if($stmt === false) {
+            throw new Exception("Unable to do prepared statement: " . $query);
+        }
+
+        if ($params) {
+            $types = $params[0];
+            $bindValues = array_slice($params, 1);
+            $bindParams = [];
+            $bindParams[] = &$types;
+            foreach ($bindValues as $key => $value) {
+                $bindParams[] = &$bindValues[$key];
             }
-            if ($params) {
-                $types = array_shift($params);
-                $stmt->bind_param($types, ...$params);
-            }
-    
-            $stmt->execute();
-            return $stmt;
-        } catch(Exception $e) {
-            throw New Exception( $e->getMessage() );
-        }	
-    }
+            call_user_func_array([$stmt, 'bind_param'], $bindParams);
+        }
+
+        $stmt->execute();
+        return $stmt;
+    } catch(Exception $e) {
+        throw new Exception($e->getMessage());
+    }   
+}
+
 }
 ?>
