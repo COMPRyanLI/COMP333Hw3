@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
-<<<<<<< Updated upstream
 import AddSong from './addSong';
 import UpdateSong from './edit';
 import DeleteSong from './delete';
-=======
-import AddSong from './components/addSong';
-import UpdateSong from './components/edit';
-import DeleteSong from './components/delete';
 import axios from "axios";
 import './App.css';
 
->>>>>>> Stashed changes
 
 function App() {
   const [feature, setFeature] = useState('view'); // 'view', 'edit', 'delete', or 'add'
@@ -22,21 +16,6 @@ function App() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-<<<<<<< Updated upstream
-    fetch('http://localhost/index.php/user/view', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      setSongList(data); // Assuming the server returns a list of songs
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-=======
     axios
       .get('http://localhost/index.php/user/view')
       .then((res) => {
@@ -45,7 +24,6 @@ function App() {
       .catch((error) => {
         console.error('Error fetching songs:', error);
       });
->>>>>>> Stashed changes
   }, []);
 
   const handleLogin = () => {
@@ -105,66 +83,33 @@ function App() {
   };
 
   const handleDeleteSong = (songId) => {
-    fetch(`http://localhost/index.php/user/delete`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id: songId }),
-    })
-    .then(() => {
-      const updatedSongList = songList.filter((song) => song.id !== songId);
-      setSongList(updatedSongList);
-      setFeature('view');
-    })
-    .catch((error) => console.error('Error deleting song:', error));
+    axios.post('http://localhost/index.php/user/delete', { id: songId })
+      .then(() => {
+        const updatedSongList = songList.filter((song) => song.id !== songId);
+        setSongList(updatedSongList);
+        setFeature('view');
+      })
+      .catch((error) => console.error('Error deleting song:', error));
   };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
   return (
     <div>
       <h1>Song Rating App</h1>
-<<<<<<< Updated upstream
-      {isLoggedIn ? (
-=======
      
->>>>>>> Stashed changes
         <>
           {feature === 'view' && (
             <div>
               <ul>
                 {songList.map((song) => (
                   <li key={song.id}>
-<<<<<<< Updated upstream
-                    {song.title} - Artist: {song.artist} - Rating: {song.rating}
-=======
                      <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}, <strong>Rating:</strong> {song.rating}
                     
->>>>>>> Stashed changes
                     <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
                     <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
                   </li>
                 ))}
               </ul>
-<<<<<<< Updated upstream
-              <button onClick={() => setFeature('add')}>Add Song</button>
-            </div>
-          )}
-
-          {feature === 'add' && songList && (
-            <AddSong onAddSong={handleAddSong} onCancel={() => setFeature('view')} />
-          )}
-
-          {feature === 'edit' && editSong && (
-            <UpdateSong song={editSong} onUpdate={handleEditSong} onCancel={() => setFeature('view')} />
-          )}
-          {feature === 'delete' && editSong && (
-            <DeleteSong song={editSong} onDeleteSong={handleDeleteSong} onCancel={() => setFeature('view')} />
-          )}
-
-        </>
-      ) : (
-=======
                 <button onClick={() => setFeature('add')}>Add Song</button>                
             </div>
           )}
@@ -189,7 +134,6 @@ function App() {
 
         </>
        : (
->>>>>>> Stashed changes
         <>
           <input
             type="text"
@@ -204,19 +148,11 @@ function App() {
           <button onClick={handleLogin}>Login</button>
           {error && <p>{error}</p>}
         </>
-<<<<<<< Updated upstream
-      )}
-=======
       )
->>>>>>> Stashed changes
     </div>
   );
 }
 
-<<<<<<< Updated upstream
-export default App;
-=======
 export default App;
               {/* <button onClick={() => setFeature('add')}>Add Song</button> */}
           
->>>>>>> Stashed changes
