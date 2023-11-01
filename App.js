@@ -29,6 +29,10 @@ function App() {
 
   
   const handleRegistration = async (event) => {
+    if (username === '' || password === ''){
+      setError('Enter stuff in');
+      return;
+    }
     event.preventDefault();
     try {
       const response = await axios.post('http://localhost/index.php/user/create', { username, password });
@@ -46,10 +50,14 @@ function App() {
   };
 
   const handleLogin = async (event) => {
+    if (username === '' || password === ''){
+      setError('Enter stuff in');
+      return;
+    }
     event.preventDefault();
     try {
       const response = await axios.post('http://localhost/index.php/user/check', { username, password });
-      if (response.status < 300 && response.data.success) {
+      if (response.status < 300 && response.data === true) {
         setError('');
         setIsLoggedIn(true);
         setFeature('view');
@@ -63,29 +71,30 @@ function App() {
 
 
   const handleAddSong = (newSong) => {
-    fetch('http://localhost/index.php/user/add', {
-      method: 'POST',
+    axios.post('http://localhost/index.php/user/add', {
+      ...newSong,
+      username: username
+    }, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newSong),
     })
-    .then(response => response.json())
-    .then(data => {
-      // Assuming the backend returns the added song with an ID
+    .then((response) => {
+      const data = response.data; // Assuming the backend returns the added song with an ID
       setSongList([...songList, data]);
       setFeature('view');
     })
-    .catch((error) => console.error('Error adding song:', error));
-  };
+    .catch((error) => {
+      console.error('Error adding song:', error);
+    });
+};
 
+  
   const handleEditSong = (editedSong) => {
-    fetch(`http://localhost/index.php/user/update`, {
-      method: 'POST',
+    axios.post(`http://localhost/index.php/user/update`, editedSong, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(editedSong),
     })
     .then(() => {
       const updatedSongList = songList.map((song) =>
@@ -95,23 +104,25 @@ function App() {
       setFeature('view');
       setEditSong(null);
     })
-    .catch((error) => console.error('Error editing song:', error));
+    .catch((error) => {
+      console.error('Error editing song:', error);
+    });
   };
-
+  
   const handleDeleteSong = (songId) => {
-    fetch(`http://localhost/index.php/user/delete`, {
-      method: 'POST',
+    axios.post('http://localhost/index.php/user/delete', { id: songId }, {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: songId }),
     })
     .then(() => {
       const updatedSongList = songList.filter((song) => song.id !== songId);
       setSongList(updatedSongList);
       setFeature('view');
     })
-    .catch((error) => console.error('Error deleting song:', error));
+    .catch((error) => {
+      console.error('Error deleting song:', error);
+    });
   };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
