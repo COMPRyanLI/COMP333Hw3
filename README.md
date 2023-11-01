@@ -10,9 +10,9 @@ The app is a music rating react app. This app allows
 
 ! In Update and create a new song, if the rating is not within the range from 1 to 5, there will be an error message.
 
-! If you add a song that is already added by other users, the addsong view will be closed and nothing would happen in the database and react page.
+! If you add a song that is already added by other users, the user will be alerted and stay at the add song page.
 
-! In registration, you have to enter a password that has at least 10 digits. And you are not allowed to enter the user name that is already taken. If so You will not be allowed to login with the username and password, although there would not be alert in registration stage. 
+! In registration, you have to enter a password that has at least 10 digits. And you are not allowed to enter the user name that is already taken. If so You will not be allowed to login with the username and password, users would be alert in registration stage. 
 
 ! Addsong, update and delete pages all have cancel button.
 

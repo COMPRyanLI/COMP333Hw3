@@ -94,9 +94,16 @@ function App() {
     })
     // update states with new values
     .then((response) => {
-      const data_new = response.data; 
-      setSongList(data_new)
-      setFeature('view');
+      if (response.data!=="false"){
+        const data_new = response.data; 
+        setSongList(data_new);
+        setFeature('view');}
+      else{
+        alert("The song already exists");
+        setFeature('add');
+
+      }
+      
     })
     .catch((error) => {
       console.error('Error adding song:', error);
