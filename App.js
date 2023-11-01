@@ -27,34 +27,40 @@ function App() {
       });
   }, []);
 
-  const handleRegistration = async () => {
-    try {
-      const response = await axios.post('/api/register', {
-        username,
-        password,
-      });
-
-      if (response.status === 201) {
-        setError(''); 
-        setIsLoggedIn(true);
-        setFeature('view');
-      }
-    } catch (error) {
-        setError('unsucessful log in');
+  const handleRegistration = () => {
+    const registrationData = {
+      username: username,
+      password: password,
+    };
+  
+    axios.post('http://localhost/index.php/user/create', registrationData)
+      .then((response) => {
+        if (response.status < 201) {
+          setError('');
+          setIsLoggedIn(true);
+          setShowRegistration(true);
+          setFeature('view');
+        } else {
+          throw new Error('Unsuccessful registration');
+        }
+      })
+      .catch((error) => {
+        setError(error.message);
         setUsername('');
         setPassword('');
         setFeature('register');
-    }
+      });
   };
+  
 
   // }
   const handleLogin = async () => {
     // Simulate a login process
-    const response = await axios.post('http://localhost/index.php/user/login' , {
+    const response = await axios.post('http://localhost/index.php/user/' , {
       username,
       password,
     });
-    
+
     if (response < 202 ) {
         setError(''); 
         setIsLoggedIn(true);
@@ -173,9 +179,14 @@ function App() {
                 {songList.map((song) => (
                   <li key={song.id}>
                     <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}, <strong>Rating:</strong> {song.rating}
-  
-                    <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
-                    <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
+
+                     {/* conditional that will check if username for song = username of user */}
+                    {username === song.username && (
+                      <div>
+                        <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
+                        <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
