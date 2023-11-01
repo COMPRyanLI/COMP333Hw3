@@ -16,8 +16,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false); // Manage registration form visibility
 
-
-
   useEffect(() => {
     axios
       .get('http://localhost/index.php/user/view')
@@ -39,11 +37,13 @@ function App() {
       if (response.status === 201) {
         setError(''); 
         setIsLoggedIn(true);
+        setFeature('view');
       }
     } catch (error) {
         setError('unsucessful log in');
         setUsername('');
         setPassword('');
+        setFeature('register');
     }
   };
 
@@ -53,19 +53,16 @@ function App() {
     const response = await axios.post('http://localhost/index.php/user/login' , {
       username,
       password,
-
     });
+    
     if (response < 202 ) {
         setError(''); 
         setIsLoggedIn(true);
-        setFeature('view')
+        setFeature('view');
       }
     else {
         setError('Invalid username or password.');
-        setUsername('');
-        setPassword('');
       };
-
    
   }
 
@@ -122,23 +119,6 @@ function App() {
   };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
-      // <div>
-      //       {feature === 'register' && (
-      //       <div>
-      //         <form onSubmit={handleRegistration}>
-      //           <div>
-      //             <label>Username:</label>
-      //               <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-      //           </div>
-      //           <div>
-      //             <label>Password:</label>
-      //             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      //           </div>
-      //           <button type="submit">Register</button>
-      //         </form>
-      //       </div>
-      //       )}
-      //     </div>
 
   return (
     <div>
