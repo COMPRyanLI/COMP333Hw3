@@ -80,8 +80,8 @@ function App() {
       },
     })
     .then((response) => {
-      const data = response.data; // Assuming the backend returns the added song with an ID
-      setSongList([...songList, data]);
+      const data_new = response.data; // Assuming the backend returns the added song with an ID
+      setSongList(data_new)
       setFeature('view');
     })
     .catch((error) => {
