@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import AddSong from './addSong';
-import UpdateSong from './edit';
-import DeleteSong from './delete';
+import AddSong from './components/addSong';
+import UpdateSong from './components/edit';
+import DeleteSong from './components/delete';
 import axios from "axios";
 import './App.css';
 
@@ -15,6 +15,9 @@ function App() {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false); // Manage registration form visibility
+  const [searchInput, setSearchInput] = useState('');
+  const [filteredSongs, setFilteredSongs] = useState([]);
+
 
   useEffect(() => {
     axios
@@ -29,11 +32,11 @@ function App() {
 
   
   const handleRegistration = async (event) => {
-    if (username === '' || password === ''){
-      setError('Enter stuff in');
+    event.preventDefault();
+    if (!username || !password || password.length < 10) {
+      setError('Please provide a valid username and a password with more than 8 characters.');
       return;
     }
-    event.preventDefault();
     try {
       const response = await axios.post('http://localhost/index.php/user/create', { username, password });
       if (response.status < 300) {
@@ -50,8 +53,8 @@ function App() {
   };
 
   const handleLogin = async (event) => {
-    if (username === '' || password === ''){
-      setError('Enter stuff in');
+    if (!username || !password) {
+      setError('Please provide a valid username and password.');
       return;
     }
     event.preventDefault();
@@ -71,6 +74,10 @@ function App() {
 
 
   const handleAddSong = (newSong) => {
+    if (!newSong.artist || !newSong.song || !newSong.rating || newSong.rating < 1 || newSong.rating > 5) {
+      setError('Please fill out all fields and provide a rating between 1 and 5.');
+      return;
+    }  
     axios.post('http://localhost/index.php/user/add', {
       ...newSong,
       username: username
@@ -91,6 +98,10 @@ function App() {
 
   
   const handleEditSong = (editedSong) => {
+    if (!editedSong.artist || !editedSong.song || !editedSong.rating || editedSong.rating < 1 || editedSong.rating > 5) {
+      setError('Please fill out all fields and provide a rating between 1 and 5.');
+      return;
+    }
     axios.post(`http://localhost/index.php/user/update`, editedSong, {
       headers: {
         'Content-Type': 'application/json',
@@ -123,6 +134,19 @@ function App() {
     .catch((error) => {
       console.error('Error deleting song:', error);
     });
+  };
+  // Handle search input changes
+  const handleSearchInput = (event) => {
+    const input = event.target.value;
+    setSearchInput(input);
+    filterSongs(input);
+  };
+
+  const filterSongs = (artist) => {
+    const filtered = songList.filter((song) =>
+      song.artist.toLowerCase().includes(artist.toLowerCase())
+    );
+    setFilteredSongs(filtered);
   };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
@@ -170,10 +194,35 @@ function App() {
       )  
        : (
         // Render features when the user is logged in
+     
+          <ul>
+            <input
+          type="text"
+          placeholder="Search by Artist"
+          value={searchInput}
+          onChange={handleSearchInput}
+        />
+          {searchInput ? (
+            // Display filtered songs
+            filteredSongs.map((song) => (
+              <li key={song.id}>
+                <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
+              </li>
+            ))
+          ) : (
+            // Display all songs when searchInput is empty
+            songList.map((song) => (
+              <li key={song.id}>
+                <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
+              </li>
+            ))
+          )}
+        </ul>
+         )}
         <div>
           {feature === 'view' && (
             <div>
-              <ul>
+              <ul className='view-pane'>
                 {songList.map((song) => (
                   <li key={song.id}>
                     <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}, <strong>Rating:</strong> {song.rating}
@@ -191,13 +240,11 @@ function App() {
               <button onClick={() => setFeature('add')}>Add Song</button>
             </div>
           )}
-          <div className="add-song-form-show-right">
+          <div className="edit-add-pane">
             {feature === 'add' && songList && (
               <AddSong onAddSong={handleAddSong} onCancel={() => setFeature('view')} />
             )}
-          </div>
-  
-          <div className="add-song-form-show-right">
+          
             {feature === 'edit' && editSong && (
               <UpdateSong song={editSong} onUpdate={handleEditSong} onCancel={() => setFeature('view')} />
             )}
@@ -209,7 +256,7 @@ function App() {
             )}
           </div>
         </div>
-      )}
+   
     </div>
   );
   
