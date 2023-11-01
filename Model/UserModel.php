@@ -10,11 +10,15 @@ class UserModel extends Database
 
     public function createUser($username,$password)
     {
+        $result = $this->select("SELECT * FROM users WHERE username = ?", ["s", $username]);
+        $num = count($result);
+        if ($num === 0) {
         $sql =  "INSERT INTO users (username, password) VALUES (?,?)";
         $stmt = $this->connection->prepare($sql);
         $pass = password_hash($password, PASSWORD_DEFAULT); // Hashing the password
         $stmt->bind_param("ss", $username, $pass);
         $stmt->execute();
+        }
     }
 
     public function checkUser($username, $password)
