@@ -1,4 +1,5 @@
 /* This class hides the Add Song form by default */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap");
 .add-song-form-hidden {
   display: none;
 }
@@ -7,6 +8,7 @@
 .add-song-form-show-right {
   display: block;
   float: right;
+  margin-top:3px ;
   margin-right: 200px; /* Adjust the margin to your preference */
 }
 
@@ -22,11 +24,12 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+
 }
 
 h1 {
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .container {
@@ -37,13 +40,14 @@ h1 {
 
 .view-pane {
   flex: 1;
-  padding: 20px;
+  padding: 10px;
   border-right: 1px solid #ccc;
+  background-color: linear-gradient(62deg,#8EC5FC 10%,#E0C3Fc 100%);
 }
 
 .edit-create-pane {
   flex: 1;
-  padding: 20px;
+  padding: 10px;
 }
 
 ul {
@@ -52,7 +56,7 @@ ul {
 }
 
 li {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 form {
