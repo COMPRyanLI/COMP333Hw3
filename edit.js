@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function UpdateSong({ song: initialSong, onEditSong }) {
+function UpdateSong({ song: initialSong, onUpdate }) {
   const [song, setTitle] = useState(initialSong.song);
   const [artist, setArtist] = useState(initialSong.artist);
   const [rating, setRating] = useState(initialSong.rating);
@@ -10,7 +10,7 @@ function UpdateSong({ song: initialSong, onEditSong }) {
     const updatedSong = { ...initialSong, song, artist, rating: parseInt(rating) };
 
     // Call the parent component's callback function to edit the song
-    onEditSong(updatedSong);
+    onUpdate(updatedSong);
   };
 
   return (
