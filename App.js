@@ -41,11 +41,13 @@ function App() {
     try {
       // Send a POST request to register the user. Updates states as needed
       const response = await axios.post('http://localhost/index.php/user/create', { username, password });
-      if (response.status < 300) {
+      if (response.status < 300 && response.data === true) {
         setError('');
         setIsLoggedIn(false);
         setShowRegistration(false);
         setFeature('view');
+        setUsername('');
+        setPassword('');
       } else {
         setError('Registration failed. Please try again.');
       }
@@ -227,6 +229,7 @@ function App() {
                 ))}
               </ul>
               <button onClick={() => setFeature('add')}>Add Song</button>
+              <button onClick={() => {setIsLoggedIn(false)}}>Log out</button>
             </div>
           )}
 

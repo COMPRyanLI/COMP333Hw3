@@ -7,8 +7,8 @@ const SearchSongs = ({ songList, onSearch }) => {
   const handleSearchInput = () => {
     // Use the searchInput state variable to filter the songs
     const filtered = songList.filter((song) =>
-      song.artist.toLowerCase().includes(searchInput.toLowerCase())
-    );
+    song.artist.toLowerCase() === searchInput.toLowerCase().trim() // trim to remove whitespace
+  );
     onSearch(filtered); // Pass the filtered list back to the parent component
   };
 
