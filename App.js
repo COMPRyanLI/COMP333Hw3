@@ -10,10 +10,11 @@ function App() {
   const [feature, setFeature] = useState('view'); // 'view', 'edit', 'delete', or 'add'
   const [songList, setSongList] = useState([]);
   const [editSong, setEditSong] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false); // Manage registration form visibility
 
   useEffect(() => {
     axios
@@ -26,26 +27,41 @@ function App() {
       });
   }, []);
 
-  const handleLogin = () => {
-    // You should add the login fetch here
-    fetch('http://localhost/index.php/user/check', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.loggedin) {
+  
+  const handleRegistration = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post('http://localhost/index.php/user/create', { username, password });
+      if (response.status < 300) {
+        setError('');
+        setIsLoggedIn(false);
+        setShowRegistration(false);
+        setFeature('view');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      setError('Network error. Please check your connection and try again.');
+    }
+  };
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post('http://localhost/index.php/user/check', { username, password });
+      if (response.status < 300 && response.data.success) {
+        setError('');
         setIsLoggedIn(true);
+        setFeature('view');
       } else {
         setError('Invalid username or password.');
       }
-    })
-    .catch((error) => console.error('Error logging in:', error));
+    } catch (error) {
+      setError('Network error. Please check your connection and try again.');
+    }
   };
-  
+
+
   const handleAddSong = (newSong) => {
     fetch('http://localhost/index.php/user/add', {
       method: 'POST',
@@ -83,74 +99,109 @@ function App() {
   };
 
   const handleDeleteSong = (songId) => {
-    axios.post('http://localhost/index.php/user/delete', { id: songId })
-      .then(() => {
-        const updatedSongList = songList.filter((song) => song.id !== songId);
-        setSongList(updatedSongList);
-        setFeature('view');
-      })
-      .catch((error) => console.error('Error deleting song:', error));
+    fetch(`http://localhost/index.php/user/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: songId }),
+    })
+    .then(() => {
+      const updatedSongList = songList.filter((song) => song.id !== songId);
+      setSongList(updatedSongList);
+      setFeature('view');
+    })
+    .catch((error) => console.error('Error deleting song:', error));
   };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
+
   return (
     <div>
-      <h1>Song Rating App</h1>
-     
-        <>
+    <h1>Song Rating App</h1>
+    {!isLoggedIn ? (
+      <div>
+        {showRegistration ? (
+          <div>
+            <h1>Register</h1>
+            <form onSubmit={handleRegistration}>
+              <div>
+                <label>Username:</label>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              </div>
+              <div>
+                <label>Password:</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              <button type="submit">Register</button>
+              {error && <p>{error}</p>}
+            </form>
+          </div>
+        ) : (
+          <div>
+            <h1>Login</h1>
+            <form onSubmit={handleLogin}>
+              <div>
+                <label>Username:</label>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              </div>
+              <div>
+                <label>Password:</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              <button type="submit">Login</button>
+              <button onClick={() => setShowRegistration(true)}>Register</button>
+              {error && <p>{error}</p>}
+            </form>
+          </div>
+        )}
+      </div>
+      )  
+       : (
+        // Render features when the user is logged in
+        <div>
           {feature === 'view' && (
             <div>
               <ul>
                 {songList.map((song) => (
                   <li key={song.id}>
-                     <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}, <strong>Rating:</strong> {song.rating}
-                    
-                    <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
-                    <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
+                    <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}, <strong>Rating:</strong> {song.rating}
+
+                     {/* conditional that will check if username for song = username of user */}
+                    {username === song.username && (
+                      <div>
+                        <button onClick={() => { setFeature('edit'); setEditSong(song); }}>Edit</button>
+                        <button onClick={() => { setFeature('delete'); setEditSong(song); }}>Delete</button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
-                <button onClick={() => setFeature('add')}>Add Song</button>                
+              <button onClick={() => setFeature('add')}>Add Song</button>
             </div>
           )}
-            <div class="add-song-form-show-right">
-          {feature === 'add' && songList && (
-            <AddSong onAddSong={handleAddSong} onCancel={() => setFeature('view')} />
-          )}
+          <div className="add-song-form-show-right">
+            {feature === 'add' && songList && (
+              <AddSong onAddSong={handleAddSong} onCancel={() => setFeature('view')} />
+            )}
+          </div>
+  
+          <div className="add-song-form-show-right">
+            {feature === 'edit' && editSong && (
+              <UpdateSong song={editSong} onUpdate={handleEditSong} onCancel={() => setFeature('view')} />
+            )}
+          </div>
+  
+          <div className="add-song-form-show-right">
+            {feature === 'delete' && editSong && (
+              <DeleteSong song={editSong} onDeleteSong={handleDeleteSong} onCancel={() => setFeature('view')} />
+            )}
+          </div>
         </div>
-
-        <div class="add-song-form-show-right">
-          {feature === 'edit' && editSong && (
-            <UpdateSong song={editSong} onUpdate={handleEditSong} onCancel={() => setFeature('view')} />
-          )}
-        </div>
-
-        <div class="add-song-form-show-right">
-          {feature === 'delete' && editSong && (
-            <DeleteSong song={editSong} onDeleteSong={handleDeleteSong} onCancel={() => setFeature('view')} />
-          )}
-        </div>
-
-
-        </>
-       : (
-        <>
-          <input
-            type="text"
-            placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleLogin}>Login</button>
-          {error && <p>{error}</p>}
-        </>
-      )
+      )}
     </div>
   );
+  
 }
 
 export default App;
