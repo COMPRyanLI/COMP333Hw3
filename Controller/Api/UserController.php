@@ -5,9 +5,10 @@ class UserController extends BaseController
 * "/user/list" Endpoint - Get list of users 
 */
 
+// The file is modified based on the template from https://code.tutsplus.com/how-to-build-a-simple-rest-api-in-php--cms-37000t
+// for implementation convenience, I combine UserController and SongController into one file: Usercontroller
 
-
-    public function createAction()
+    public function createAction()// controller for registration
     {
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
@@ -44,7 +45,7 @@ class UserController extends BaseController
         }
     }
 
-    public function checkAction(){
+    public function checkAction(){ // controller function for login
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         if (strtoupper($requestMethod) == 'POST'){
             $postData = json_decode(file_get_contents('php://input'),true);
@@ -57,7 +58,7 @@ class UserController extends BaseController
 
     }
 
-    public function deleteAction(){
+    public function deleteAction(){ //controller function for delete
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         if (strtoupper($requestMethod) == 'POST'){
@@ -88,7 +89,7 @@ class UserController extends BaseController
             );
         }
     }
-    public function updateAction(){
+    public function updateAction(){ // controller function for update
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         if (strtoupper($requestMethod) == 'POST'){
             $postData = json_decode(file_get_contents('php://input'),true);
@@ -101,7 +102,7 @@ class UserController extends BaseController
             $userModel -> updateRating($artist,$song,$rating,$id);
         }
     }
-    public function addAction(){
+    public function addAction(){ // controller function for adding a new song
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         if (strtoupper($requestMethod) == 'POST'){
             try {
@@ -161,7 +162,7 @@ class UserController extends BaseController
             }
         }
     }
-    public function viewAction(){
+    public function viewAction(){ // controller function for getting rating table
          $strErrorDesc = '';
          $requestMethod = $_SERVER["REQUEST_METHOD"];
          $arrQueryStringParams = $this->getQueryStringParams();
@@ -194,7 +195,7 @@ class UserController extends BaseController
              );
          }
      }
-    public function listAction(){
+    public function listAction(){ // controller function for getting user list
         $strErrorDesc = '';
          $requestMethod = $_SERVER["REQUEST_METHOD"];
          $arrQueryStringParams = $this->getQueryStringParams();

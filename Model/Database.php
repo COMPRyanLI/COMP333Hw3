@@ -1,8 +1,9 @@
 <?php
+// this code is copied from https://code.tutsplus.com/how-to-build-a-simple-rest-api-in-php--cms-37000t
 class Database
 {
     protected $connection = null;
-    public function __construct()
+    public function __construct() //construct function
     {
         try {
             $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME,DB_PORT);
@@ -14,7 +15,7 @@ class Database
             throw new Exception($e->getMessage());   
         }			
     }
-    public function select($query = "" , $params = [])
+    public function select($query = "" , $params = []) // select based on query
     {
         try {
             $stmt = $this->executeStatement( $query , $params );
@@ -26,7 +27,7 @@ class Database
         }
         return false;
     }
-    private function executeStatement($query = "", $params = [])
+    private function executeStatement($query = "", $params = [])// execute query
 {
     try {
         $stmt = $this->connection->prepare($query);

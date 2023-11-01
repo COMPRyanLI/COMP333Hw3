@@ -1,14 +1,15 @@
 <?php
 require_once PROJECT_ROOT_PATH . "/Model/Database.php";
-
+// this code is modified using the template from https://code.tutsplus.com/how-to-build-a-simple-rest-api-in-php--cms-37000t
+// for implementation convenience, I combine SongModel and UserModel into one file --- UserModel
 class UserModel extends Database
 {
-    public function getUsers($limit)
+    public function getUsers($limit) // model function for getting userlist
     {
         return $this->select("SELECT * FROM users ORDER BY username ASC LIMIT ?", ["i", $limit]);
     }
 
-    public function createUser($username,$password)
+    public function createUser($username,$password)//model function for registration
     {
         $result = $this->select("SELECT * FROM users WHERE username = ?", ["s", $username]);
         $num = count($result);
@@ -25,7 +26,7 @@ class UserModel extends Database
         }
     }
 
-    public function checkUser($username, $password)
+    public function checkUser($username, $password)// model function for login 
     {
         $result = $this->select("SELECT * FROM users where username=?", ["s", $username]);
         $num = count($result);
@@ -37,7 +38,7 @@ class UserModel extends Database
         }
     }
 
-    public function updateRating($id, $artist, $song, $rating)
+    public function updateRating($id, $artist, $song, $rating)// model function for update ratings
     {
         $sql = "UPDATE ratings SET artist = ?, song = ?, rating = ? WHERE id = ?";
         $stmt = $this->connection->prepare($sql);
@@ -45,7 +46,7 @@ class UserModel extends Database
         $stmt->execute();
     }
 
-    public function deleteRating($id)
+    public function deleteRating($id)// model function for delete a rating
     {
         $sql = "DELETE FROM ratings WHERE id = ?";
         $stmt = $this->connection->prepare($sql);
@@ -53,7 +54,7 @@ class UserModel extends Database
         $stmt->execute();
     }
 
-    public function addRating($username, $artist, $song, $rating)
+    public function addRating($username, $artist, $song, $rating)// model function for adding a new song
     {
         $result = $this->select("SELECT * FROM ratings WHERE song = ?", ["s", $song]);
         $num = count($result);
@@ -72,7 +73,7 @@ class UserModel extends Database
         }
     }
 
-    public function getRating($limit)
+    public function getRating($limit)//model function for getting song list
     {
         return $this->select("SELECT * FROM ratings ORDER BY id ASC LIMIT ?", ["i", $limit]);
     }
