@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import AddSong from './components/addSong';
-import UpdateSong from './components/edit';
-import DeleteSong from './components/delete';
+import AddSong from './addSong';
+import UpdateSong from './edit';
+import DeleteSong from './delete';
+import SearchSongs from './searchSong';
 import axios from "axios";
 import './App.css';
 
@@ -15,9 +16,7 @@ function App() {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false); // Manage registration form visibility
-  const [searchInput, setSearchInput] = useState('');
-  const [filteredSongs, setFilteredSongs] = useState([]);
-
+  const [searchResults, setSearchResults] = useState([]); // Store search results
 
   useEffect(() => {
     axios
@@ -136,21 +135,18 @@ function App() {
     });
   };
   // Handle search input changes
-  const handleSearchInput = (event) => {
-    const input = event.target.value;
-    setSearchInput(input);
-    filterSongs(input);
-  };
-
-  const filterSongs = (artist) => {
-    const filtered = songList.filter((song) =>
-      song.artist.toLowerCase().includes(artist.toLowerCase())
-    );
-    setFilteredSongs(filtered);
-  };
+      // Define the search callback function
+      const handleSearch = (results) => {
+        if (results === '') {
+          alert("Nothing found");
+          return;
+        }
+        setSearchResults(results);
+      };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
 
+ 
   return (
     <div>
     <h1>Song Rating App</h1>
@@ -194,32 +190,17 @@ function App() {
       )  
        : (
         // Render features when the user is logged in
-     
-          <ul>
-            <input
-          type="text"
-          placeholder="Search by Artist"
-          value={searchInput}
-          onChange={handleSearchInput}
-        />
-          {searchInput ? (
-            // Display filtered songs
-            filteredSongs.map((song) => (
-              <li key={song.id}>
-                <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
-              </li>
-            ))
-          ) : (
-            // Display all songs when searchInput is empty
-            songList.map((song) => (
-              <li key={song.id}>
-                <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
-              </li>
-            ))
-          )}
-        </ul>
-         )}
         <div>
+          <SearchSongs songList={songList} onSearch={handleSearch} />
+            {searchResults.length > 0 && (
+              <ul>
+                {searchResults.map((song) => (
+                  <li key={song.id}>
+                    <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
+                  </li>
+                ))}
+              </ul>
+            )}
           {feature === 'view' && (
             <div>
               <ul className='view-pane'>
@@ -256,7 +237,7 @@ function App() {
             )}
           </div>
         </div>
-   
+       )}
     </div>
   );
   
