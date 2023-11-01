@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+// AddSong component of the app
 function AddSong({ onAddSong,onCancel }) {
   const [artist, setArtist] = useState('');
   const [song, setSong] = useState('');
@@ -9,7 +10,7 @@ function AddSong({ onAddSong,onCancel }) {
   const handleAddSong = (e) => {
     e.preventDefault();
 
-    // Check if the rating is valid, you can adjust this as necessary
+    // Check if the rating is valid
     if (rating < 0 || rating > 5) {
       alert("Rating should be between 0 and 5");
       return;
@@ -31,6 +32,8 @@ function AddSong({ onAddSong,onCancel }) {
     setSong('');
     setRating('');
   };
+
+  // Handles cancel request
   const handlecancel = ()=>{
     onCancel();
   }

@@ -1,6 +1,6 @@
-// SearchSongs.js
 import React, { useState } from 'react';
 
+// Search song conponent for App.js
 const SearchSongs = ({ songList, onSearch }) => {
   const [searchInput, setSearchInput] = useState('');
 

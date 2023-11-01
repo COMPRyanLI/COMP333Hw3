@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+// Update song component for App.js. 
 function UpdateSong({ song: initialSong, onUpdate,onCancel }) {
   const [song, setTitle] = useState(initialSong.song);
   const [artist, setArtist] = useState(initialSong.artist);
@@ -16,6 +17,8 @@ function UpdateSong({ song: initialSong, onUpdate,onCancel }) {
     // Call the parent component's callback function to edit the song
     onUpdate(updatedSong);
   };
+
+  // Handles cancel request
   const handlecancel = ()=>{
     onCancel();
   }
