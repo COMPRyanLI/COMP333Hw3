@@ -1,0 +1,28 @@
+// SearchSongs.js
+import React, { useState } from 'react';
+
+const SearchSongs = ({ songList, onSearch }) => {
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearchInput = () => {
+    // Use the searchInput state variable to filter the songs
+    const filtered = songList.filter((song) =>
+      song.artist.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    onSearch(filtered); // Pass the filtered list back to the parent component
+  };
+
+  return (
+    <div>
+      <label>Artist:</label>
+      <input
+        type="text"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+      <button onClick={handleSearchInput}>Search</button>
+    </div>
+  );
+};
+
+export default SearchSongs;
