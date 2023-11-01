@@ -4,6 +4,7 @@ function AddSong({ onAddSong }) {
   const [artist, setArtist] = useState('');
   const [song, setSong] = useState('');
   const [rating, setRating] = useState('');
+  
 
   const handleAddSong = (e) => {
     e.preventDefault();
@@ -16,9 +17,10 @@ function AddSong({ onAddSong }) {
 
     // Create a new song object with the input values
     const newSong = {
-      artist: artist,
-      song: song,
-      rating: parseInt(rating),
+       artist,
+      song,
+      rating:parseInt(rating)
+      
     };
 
     // Call the parent component's callback function to add the new song
