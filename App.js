@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AddSong from './components/addSong';
 import UpdateSong from './components/edit';
 import DeleteSong from './components/delete';
+import SearchSongs from './components/searchSong';
 import axios from "axios";
 import './App.css';
 
@@ -15,8 +16,7 @@ function App() {
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false); // Manage registration form visibility
-  const [searchInput, setSearchInput] = useState('');
-  const [filteredSongs, setFilteredSongs] = useState([]);
+  const [searchResults, setSearchResults] = useState([]); // Store search results
 
 
   useEffect(() => {
@@ -135,25 +135,23 @@ function App() {
       console.error('Error deleting song:', error);
     });
   };
-  // Handle search input changes
-  const handleSearchInput = (event) => {
-    const input = event.target.value;
-    setSearchInput(input);
-    filterSongs(input);
+
+      // Define the search callback function
+  const handleSearch = (results) => {
+    if (results === '') {
+      alert("Nothing found");
+      return;
+    }
+    setSearchResults(results);
   };
 
-  const filterSongs = (artist) => {
-    const filtered = songList.filter((song) =>
-      song.artist.toLowerCase().includes(artist.toLowerCase())
-    );
-    setFilteredSongs(filtered);
-  };
   // Other functions (handleAddSong, handleEditSong, handleDeleteSong) remain the same
 
 
   return (
     <div>
     <h1>Song Rating App</h1>
+    
     {!isLoggedIn ? (
       <div>
         {showRegistration ? (
@@ -184,8 +182,12 @@ function App() {
                 <label>Password:</label>
                 <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
-              <button type="submit">Login</button>
-              <button onClick={() => setShowRegistration(true)}>Register</button>
+
+              
+              <button type="submit" className="button">Login</button>
+              <button className='button' onClick={() => setShowRegistration(true)}>Register</button>
+           
+
               {error && <p>{error}</p>}
             </form>
           </div>
@@ -193,26 +195,18 @@ function App() {
       </div>
       )  
        : (
-        // Render features when the user is logged in
-     
-        <form onSubmit={handleSearchInput}>
-              <div>
-                <label>Artist:</label>
-                <input type="text" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
-              </div>
-              <button type="submit">Search</button>
-                {searchInput && (
-                // Display filtered songs
-                filteredSongs.map((song) => (
+        // Render features when the user is logged in     
+        <div>
+            <SearchSongs songList={songList} onSearch={handleSearch} />
+            {searchResults.length > 0 && (
+              <ul>
+                {searchResults.map((song) => (
                   <li key={song.id}>
                     <strong>Artist:</strong> {song.artist}, <strong>Song:</strong> {song.song}
                   </li>
-                ))
-              )}
-            </form>
-
-         )}
-        <div>
+                ))}
+              </ul>
+            )}
           {feature === 'view' && (
             <div>
               <ul className='view-pane'>
@@ -249,7 +243,7 @@ function App() {
             )}
           </div>
         </div>
-   
+       )}
     </div>
   );
   
