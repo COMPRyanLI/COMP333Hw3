@@ -58,6 +58,13 @@ class UserModel extends Database
             $stmt = $this->connection->prepare($sql);
             $stmt->bind_param("sssi", $username, $artist, $song, $rating);
             $stmt->execute();
+            $result2 = $this->select("SELECT * FROM ratings ORDER BY id ASC LIMIT ?", ["i", 30]);
+            return $result2;
+        }
+        else{
+            $result2 = $this->select("SELECT * FROM ratings ORDER BY id ASC LIMIT ?", ["i", 30]);
+            return $result2;
+
         }
     }
 

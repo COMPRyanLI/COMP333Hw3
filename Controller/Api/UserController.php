@@ -137,14 +137,17 @@ class UserController extends BaseController
                 }
     
                 // Instantiate a UserModel to create a new rating
+
                 $userModel = new UserModel();
-                $userModel->addRating($username, $artist, $song, $rating);
+                $newSongDetails = $userModel->addRating($username, $artist, $song, $rating);
+            
+            if ($newSongDetails) {
+                // Send success response along with the song details
+                $this->sendOutput(json_encode($newSongDetails));
+            }
                 
                 // Send success response (you can modify this part to your needs)
-                $this->sendOutput(json_encode(['message' => 'Rating added successfully']), [
-                    'Content-Type: application/json',
-                    'HTTP/1.1 200 OK'
-                ]);
+                
     
             } catch (Exception $e) {
                 // Send error response
