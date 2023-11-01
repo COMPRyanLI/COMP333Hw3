@@ -1,0 +1,66 @@
+/* This class hides the Add Song form by default */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap");
+.add-song-form-hidden {
+  display: none;
+}
+
+/* This class aligns the Add Song form to the right when applied */
+.add-song-form-show-right {
+  display: block;
+  float: right;
+  margin-top:3px ;
+  margin-right: 200px; /* Adjust the margin to your preference */
+}
+
+.side-bar {
+  position: fixed; /* This positions the container to the side and fixes it in place */
+  top: 0; /* Adjust the top value to position it vertically */
+  left: 0; /* Adjust the left value to position it horizontally */
+  padding: 20px; /* Add some padding for spacing */
+  background-color: #f2f2f2; /* Add a background color for the side bar */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.view-pane {
+  flex: 1;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  background-color: linear-gradient(62deg,#8EC5FC 10%,#E0C3Fc 100%);
+}
+
+.edit-create-pane {
+  flex: 1;
+  padding: 10px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+}
+
+form {
+  margin: 10px 0;
+}
+
+/* Add more specific styles as needed */
